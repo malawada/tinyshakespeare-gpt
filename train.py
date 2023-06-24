@@ -1,17 +1,24 @@
 import torch
 from bigram_lm import BigramLanguageModel
 from lstm_lm import LSTMLanguageModel
+from transformer import TransformerLanguageModel
 from tqdm import tqdm
 torch.manual_seed(1)
 
 
 '''initialize global vars'''
-block_size = 8 #number of characters in a sequence
-batch_size = 4 #number of sequences in a mini-batch
+block_size = 32 #number of characters in a sequence
+batch_size = 16 #number of sequences in a mini-batch
+embed_size = 64 #size of embedding vectors
+num_heads = 8 #number of attention heads
+num_layers = 4 #number of transformer layers
+dropout = 0.0 #dropout probability
 learning_rate = 1e-3 #learning rate for optimizer
-epochs = 500 #number of training epochs
+epochs = 5000 #number of training iterations
+test_step = 500 #number of training iterations between each validation
 device = 'cuda' if torch.cuda.is_available() else 'cpu' #use GPU if available
-model_name = 'lstm' #choose between 'bigram' and 'lstm'
+model_name = 'transformer' #choose between 'bigram', 'lstm', and 'transformer'
+
 
 class Trainer:
     def __init__(self):
@@ -50,6 +57,13 @@ class Trainer:
             self.model = BigramLanguageModel(self.vocab_size).to(device)
         elif model_name == 'lstm':
             self.model = LSTMLanguageModel(self.vocab_size).to(device)
+        elif model_name == 'transformer':
+            self.model = TransformerLanguageModel(self.vocab_size, 
+                                                  embed_size, 
+                                                  block_size, 
+                                                  num_heads, 
+                                                  num_layers, 
+                                                  dropout).to(device)
         self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=learning_rate)
 
 
@@ -61,7 +75,7 @@ class Trainer:
             logits, loss = self.model(x,y)
             loss.backward()
             self.optimizer.step()
-            if step % 100 == 0:
+            if step % test_step == 0:
                 self.val('train')
                 val_loss = self.val('test')
                 if val_loss < self.best_val_loss:
