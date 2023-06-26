@@ -1,6 +1,15 @@
 # tinyshakespeare-gpt
  Basic GPT model for tiny shakespeare
+## Files
+main.ipynb - old notebook for initial training and testing with the dataset.
 
+train.py - main training file. Using PyTorch and Python 3, run this file to train a model.
+
+other *.py - model files
+
+*.pt - saved model weights.
+
+input.txt - tinyshakespeare dataset.
 
 ## Model Objective
 Each model has the goal of predicting the next character given a block of previous characters from randomly selected passages of Shakespeare. Essentially, this means each model is a bigram language model. Once the model is trained, the generate() function can be called to produce new "Shakespeare-like" text by repeatedly predicting the next character and feeding prior predictions back into the model, building a string of text. 
