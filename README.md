@@ -1,4 +1,4 @@
-# tinyshakespeare-gpt
+# tinyshakespeare-transformer
  Basic language models for learning and generating data from the tiny shakespeare dataset
 ## Files
 main.ipynb - old notebook for initial training and testing with the dataset.
